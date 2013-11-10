@@ -3,8 +3,8 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/lib/LocationPicker.iml" filepath="$PROJECT_DIR$/lib/LocationPicker.iml" />
-      <module fileurl="file://$PROJECT_DIR$/LocationPickerProject.iml" filepath="$PROJECT_DIR$/LocationPickerProject.iml" />
       <module fileurl="file://$PROJECT_DIR$/android-location-picker.iml" filepath="$PROJECT_DIR$/android-location-picker.iml" />
+      <module fileurl="file://$PROJECT_DIR$/lib/lib.iml" filepath="$PROJECT_DIR$/lib/lib.iml" />
     </modules>
   </component>
 </project>

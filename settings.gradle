@@ -1,1 +1,1 @@
-include ':LocationPicker'
+include ':lib'

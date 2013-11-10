@@ -1,3 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
+
     <string name="app_name">Location Picker</string>
+    <string name="comuna">Comuna de residencia</string>
+    <string name="provincia">Provincia de residencia</string>
+    <string name="region">Región de residencia</string>
+    <string name="country">País de residencia</string>
 </resources>
