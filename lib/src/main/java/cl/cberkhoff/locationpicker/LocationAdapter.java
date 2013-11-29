@@ -18,6 +18,7 @@ public class LocationAdapter extends ArrayAdapter<Location> {
 
     private final List<Location> originalLocations;
     private ParentIdFilter filter;
+    private int count;
 
     class ViewHolder{
         TextView name;
@@ -29,12 +30,18 @@ public class LocationAdapter extends ArrayAdapter<Location> {
         for(Location l : originalLocations){
             add(l);
         }
+        this.count = originalLocations.size();
         notifyDataSetChanged();
     }
 
     @Override
     public View getDropDownView(int position, View convertView, ViewGroup parent) {
         return getView(position, convertView, parent);
+    }
+
+    @Override
+    public int getCount() {
+        return this.count;
     }
 
     @Override
@@ -57,7 +64,7 @@ public class LocationAdapter extends ArrayAdapter<Location> {
     }
 
     @Override
-    public ParentIdFilter getFilter() {
+    public Filter getFilter() {
         if(filter == null){
             filter = new ParentIdFilter();
         }
@@ -73,7 +80,7 @@ public class LocationAdapter extends ArrayAdapter<Location> {
             final ArrayList<Location> filteredLocations = new ArrayList<Location>();
 
             for(Location l : originalLocations){
-                if(l.getParentId() == null && (l.getParentId()+"").equals(constraint)){
+                if(l.getParentId() != null && (l.getParentId()+"").equals(constraint)){
                     filteredLocations.add(l);
                 }
             }
@@ -87,9 +94,11 @@ public class LocationAdapter extends ArrayAdapter<Location> {
         @Override
         protected void publishResults(CharSequence constraint, FilterResults results) {
             clear();
-            for(Location l : ((ArrayList<Location>) results.values) ){
+            final ArrayList<Location> values = (ArrayList<Location>) results.values;
+            for(Location l : values){
                 add(l);
             }
+            count = values.size();
             notifyDataSetChanged();
         }
     }

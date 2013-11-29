@@ -23,8 +23,7 @@ public class LocationPicker extends LinearLayout{
     public LocationPicker(Context context, AttributeSet attrs) {
         super(context, attrs);
 
-        final LayoutInflater i = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        i.inflate(R.layout.view_location_picker, this, true);
+        setOrientation(LinearLayout.VERTICAL);
     }
 
     /**
@@ -53,13 +52,19 @@ public class LocationPicker extends LinearLayout{
                         e.setText(selectedLocation.getName());
 
                         // configure child
-                        final LocationLevel c = ll.getChild();
-                        if(c != null){
+                        if(ll.isChildValid(selectedLocation)){
+                            final LocationLevel c = ll.getChild();
+                            c.getAdapter().getFilter().filter((CharSequence) (selectedLocation.getId()+""));
+
                             c.getEditText().setVisibility(View.VISIBLE);
-                            c.getAdapter().getFilter().filter(selectedLocation.getId()+"");
+                            c.getEditText().setText(null);
 
                             // hide grandchilds
                             hideChilds(c);
+                        } else {
+                            if(ll.getChild() != null){
+                                hideChilds(ll);
+                            }
                         }
 
                         dialog.dismiss();
@@ -69,6 +74,9 @@ public class LocationPicker extends LinearLayout{
         if(ll.getChild() != null){
             setLevels(ll.getChild());
         }
+
+        // initially all childs must be hidden
+        hideChilds(ll);
     }
 
     /**

@@ -29,7 +29,7 @@ public class JSONLocationReader implements LocationReader{
     final String assetsFilename;
     final Context context;
 
-    public JSONLocationReader(String assetsFilename, Context context){
+    public JSONLocationReader(Context context, String assetsFilename){
         this.assetsFilename = assetsFilename;
         this.context = context;
     }
@@ -49,6 +49,7 @@ public class JSONLocationReader implements LocationReader{
             JSONArray v = null;
             try {
                 v = l.getJSONArray(i);
+
                 if(v.length() == 1){
                     r.add(new Location(null, null, v.getString(0)));
                 } else if(v.length() == 2){

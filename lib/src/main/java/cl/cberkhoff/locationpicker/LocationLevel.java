@@ -23,6 +23,10 @@ public class LocationLevel {
         return child;
     }
 
+    public boolean isChildValid(Location current){
+        return current != null && getChild() != null && current.getId() != null;
+    }
+
     public LocationAdapter getAdapter() {
         return adapter;
     }
@@ -42,7 +46,23 @@ public class LocationLevel {
     public static void chileanLocationLevels(final Context c, final LocationPicker lp){
         final LocationLevel comuna = new LocationLevel(
                 null,
-                new LocationAdapter(c, new JSONLocationReader("cl_comunas.json")),
+                new LocationAdapter(c, new JSONLocationReader(c, "cl_comunas.json")),
                 R.string.comuna);
+
+        final LocationLevel provincias = new LocationLevel(
+                comuna,
+                new LocationAdapter(c, new JSONLocationReader(c, "cl_provincias.json")),
+                R.string.provincia);
+
+        final LocationLevel regiones = new LocationLevel(
+                provincias,
+                new LocationAdapter(c, new JSONLocationReader(c, "cl_regiones.json")),
+                R.string.region);
+
+        final LocationLevel countries = new LocationLevel(
+                regiones,
+                new LocationAdapter(c, new JSONLocationReader(c, "es_countries.json")),
+                R.string.country);
+        lp.setLevels(countries);
     }
 }
