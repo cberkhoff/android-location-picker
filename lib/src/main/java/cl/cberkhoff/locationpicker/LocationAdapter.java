@@ -63,6 +63,15 @@ public class LocationAdapter extends ArrayAdapter<Location> {
         return convertView;
     }
 
+    public Location getLocationByName(String locationName){
+        for(Location l : originalLocations){
+            if(l.getName().equals(locationName)){
+                return l;
+            }
+        }
+        return null;
+    }
+
     @Override
     public Filter getFilter() {
         if(filter == null){

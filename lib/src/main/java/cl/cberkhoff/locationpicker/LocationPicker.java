@@ -3,15 +3,13 @@ package cl.cberkhoff.locationpicker;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.text.TextUtils;
 import android.util.AttributeSet;
-import android.view.LayoutInflater;
+import android.util.Pair;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ListAdapter;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Created by CBerkhoff on 08-10-13.
@@ -33,6 +31,11 @@ public class LocationPicker extends LinearLayout{
      * @param ll
      */
     public void setLevels(final LocationLevel ll){
+        this.rootLocationLevel = ll;
+        setLevelsWithoutRoot(ll);
+    }
+
+    private void setLevelsWithoutRoot(final LocationLevel ll){
         final EditText e = new EditText(getContext());
         ll.setEditText(e);
         addView(e);
@@ -48,35 +51,38 @@ public class LocationPicker extends LinearLayout{
                     @Override
                     public void onClick(DialogInterface dialog, int position) {
                         // store values
-                        final Location selectedLocation= ll.getAdapter().getItem(position);
-                        e.setText(selectedLocation.getName());
-
-                        // configure child
-                        if(ll.isChildValid(selectedLocation)){
-                            final LocationLevel c = ll.getChild();
-                            c.getAdapter().getFilter().filter((CharSequence) (selectedLocation.getId()+""));
-
-                            c.getEditText().setVisibility(View.VISIBLE);
-                            c.getEditText().setText(null);
-
-                            // hide grandchilds
-                            hideChilds(c);
-                        } else {
-                            if(ll.getChild() != null){
-                                hideChilds(ll);
-                            }
-                        }
-
+                        setupEditText(ll.getAdapter().getItem(position), ll);
                         dialog.dismiss();
                     }
                 });
 
         if(ll.getChild() != null){
-            setLevels(ll.getChild());
+            setLevelsWithoutRoot(ll.getChild());
         }
 
         // initially all childs must be hidden
         hideChilds(ll);
+    }
+
+    private void setupEditText(final Location selectedLocation, final LocationLevel ll){
+        ll.getEditText().setText(selectedLocation.getName());
+        ll.getEditText().setVisibility(View.VISIBLE);
+
+        // configure child
+        if(ll.childHasParent(selectedLocation)){
+            final LocationLevel c = ll.getChild();
+            c.getAdapter().getFilter().filter((CharSequence) (selectedLocation.getId()+""));
+
+            c.getEditText().setVisibility(View.VISIBLE);
+            c.getEditText().setText(null);
+
+            // hide grandchilds
+            hideChilds(c);
+        } else {
+            if(ll.getChild() != null){
+                hideChilds(ll);
+            }
+        }
     }
 
     /**
@@ -112,6 +118,78 @@ public class LocationPicker extends LinearLayout{
                 dialog.show();
             }
         });
+    }
+
+    public void setError(String error){
+        rootLocationLevel.getEditText().setError(error);
+    }
+
+    public String getText(){
+        return getText(rootLocationLevel);
+    }
+
+    public boolean allSet(){
+        return allSet(rootLocationLevel);
+    }
+
+    private boolean allSet(LocationLevel ll){
+        if(ll.getEditText().getVisibility() == View.VISIBLE){
+            if(TextUtils.isEmpty(ll.getEditText().getText())){
+                return false;
+            } else {
+                if(ll.getChild() != null){
+                    return allSet(ll.getChild());
+                } else {
+                    return true;
+                }
+            }
+        } else {
+            return true;
+        }
+    }
+
+    private String getText(LocationLevel ll){
+        final String child = ll.getChild() == null ? "" : getText(ll.getChild());
+
+        if(ll.getEditText().getVisibility() == View.VISIBLE){
+            if(TextUtils.isEmpty(ll.getEditText().getText())){
+                return "";
+            } else {
+                return (TextUtils.isEmpty(child) ? "" : child + ", ") + ll.getEditText().getText().toString();
+            }
+        } else {
+            return "";
+        }
+    }
+
+    public void setText(String text){
+        if(text != null){
+            setText(rootLocationLevel, text);
+        }
+    }
+
+    private void setText(LocationLevel ll, String text){
+        final Pair<String, String> firstRest = lastSubstringSplit(text);
+
+        final Location location = ll.getAdapter().getLocationByName(firstRest.first);
+        if(location != null){
+            setupEditText(location, ll);
+        } else {
+            return;
+        }
+
+        if(ll.getChild() != null && firstRest.second != null){
+            setText(ll.getChild(), firstRest.second);
+        }
+    }
+
+    private Pair<String, String> lastSubstringSplit(String text){
+        final int commaIndex = text.lastIndexOf(",");
+        if(commaIndex == -1){
+            return new Pair<String, String>(text.trim(), null);
+        } else {
+            return new Pair<String, String>(text.substring(commaIndex+1).trim(), text.substring(0, commaIndex).trim());
+        }
     }
 
 }

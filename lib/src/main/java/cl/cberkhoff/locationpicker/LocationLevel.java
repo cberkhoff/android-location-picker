@@ -23,7 +23,7 @@ public class LocationLevel {
         return child;
     }
 
-    public boolean isChildValid(Location current){
+    public boolean childHasParent(Location current){
         return current != null && getChild() != null && current.getId() != null;
     }
 
