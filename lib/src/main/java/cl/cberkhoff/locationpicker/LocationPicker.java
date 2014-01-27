@@ -11,6 +11,8 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ListAdapter;
 
+import java.util.ArrayList;
+
 /**
  * Created by CBerkhoff on 08-10-13.
  */
@@ -160,6 +162,18 @@ public class LocationPicker extends LinearLayout{
         } else {
             return "";
         }
+    }
+
+    public ArrayList<EditText> getEditTexts(){
+        final ArrayList<EditText> editTexts = new ArrayList<EditText>();
+        LocationLevel currentLevel = rootLocationLevel;
+        while(currentLevel != null){
+            editTexts.add(currentLevel.getEditText());
+            currentLevel = currentLevel.getChild();
+        }
+
+        return editTexts;
+
     }
 
     public void setText(String text){
